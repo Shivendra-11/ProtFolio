@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shivendra Keshari - Interactive Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #5eead4 0%, #14b8a6 50%, #0d9488 100%);
+            --secondary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --glass-bg: rgba(30, 41, 59, 0.1);
+            --glass-border: rgba(94, 234, 212, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #cbd5e1;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(20, 184, 166, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(94, 234, 212, 0.03) 0%, transparent 50%);
+            z-index: -2;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+            25% { transform: translateX(-20px) translateY(-20px) rotate(1deg); }
+            50% { transform: translateX(20px) translateY(20px) rotate(-1deg); }
+            75% { transform: translateX(-10px) translateY(10px) rotate(0.5deg); }
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(15px) saturate(150%);
+            border: 1px solid rgba(94, 234, 212, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 35px 70px rgba(20, 184, 166, 0.2);
+            border-color: rgba(94, 234, 212, 0.3);
+        }
+
+        /* Enhanced gradient text */
+        .gradient-text {
+            background: var(--primary-gradient);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Floating animation */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Pulse animation */
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(94, 234, 212, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(94, 234, 212, 0.6); }
+        }
+
+        /* Enhanced header */
+        .header-scrolled {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1),
+                        0 1px 0 rgba(94, 234, 212, 0.1);
+        }
+
+        /* Chart container with glow */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 450px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 550px;
+                max-width: 700px;
+            }
+        }
+
+        /* Section animations */
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Enhanced cursor */
+        #cursor-dot {
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #5eead4 0%, #14b8a6 100%);
+            border-radius: 50%;
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(94, 234, 212, 0.6);
+        }
+
+        #cursor-dot.expanded {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(94, 234, 212, 0.2) 0%, transparent 70%);
+            border: 2px solid rgba(94, 234, 212, 0.5);
+            box-shadow: 0 0 40px rgba(94, 234, 212, 0.8);
+        }
+
+        /* Enhanced timeline */
+        .timeline-point::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            border: 3px solid #0f172a;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(94, 234, 212, 0.5);
+        }
+
+        .timeline-item:hover .timeline-point::before {
+            transform: translateY(-50%) scale(1.3);
+            box-shadow: 0 0 30px rgba(94, 234, 212, 0.8);
+        }
+
+        /* Enhanced buttons */
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: #0f172a;
+            font-weight: 700;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(94, 234, 212, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(94, 234, 212, 0.5);
+        }
+
+        /* Filter buttons */
+        .filter-btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(94, 234, 212, 0.2);
+            color: #cbd5e1;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(94, 234, 212, 0.2);
+            border-color: rgba(94, 234, 212, 0.4);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-gradient);
+            color: #0f172a;
+            box-shadow: 0 8px 25px rgba(94, 234, 212, 0.4);
+        }
+
+        /* Aurora canvas */
+        #aurora-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Modal enhancements */
+        #feedback-modal {
+            transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(15px);
+        }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(94, 234, 212, 0.3);
+            backdrop-filter: blur(20px);
+            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Form enhancements */
+        .form-input {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(94, 234, 212, 0.2);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            border-color: rgba(94, 234, 212, 0.6);
+            box-shadow: 0 0 0 4px rgba(94, 234, 212, 0.1);
+            outline: none;
+        }
+
+        /* Social links */
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(94, 234, 212, 0.2);
+            border-radius: 50%;
+            color: #cbd5e1;
+            font-size: 24px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            transform: translateY(-10px) scale(1.1);
+            background: var(--primary-gradient);
+            color: #0f172a;
+            box-shadow: 0 15px 30px rgba(94, 234, 212, 0.4);
+        }
+
+        /* Typewriter effect */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background-color: #5eead4;
+            animation: blink 0.7s infinite;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #34d399; /* emerald-400 */
+            border-radius: 50%;
+            animation: pulseDot 1.5s infinite;
+        }
+        @keyframes pulseDot {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+        .status-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -75px;
+            width: 150px;
+            transition: opacity 0.3s;
+        }
+        .status-indicator:hover .status-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Scroll to Top Button */
+        #scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-size: 24px;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            z-index: 1000;
+        }
+        #scroll-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .project-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-slate-300">
+    <div id="cursor-dot"></div>
+
+    <header id="header" class="sticky top-0 z-50 transition-all duration-300">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#home" class="text-xl font-bold text-white gradient-text">Shivendra Keshari</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#about" class="text-slate-300 hover:text-teal-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-slate-800/50">About</a>
+                        <a href="#skills" class="text-slate-300 hover:text-teal-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-slate-800/50">Skills</a>
+                        <a href="#experience" class="text-slate-300 hover:text-teal-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-slate-800/50">Experience</a>
+                        <a href="#projects" class="text-slate-300 hover:text-teal-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-slate-800/50">Projects</a>
+                        <a href="#education" class="text-slate-300 hover:text-teal-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-slate-800/50">Education</a>
+                        <a href="#contact" class="text-slate-300 hover:text-teal-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-slate-800/50">Contact</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all">
+                        <span class="sr-only">Open main menu</span>
+                        <span class="block h-6 w-6" aria-hidden="true">&#9776;</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 glass">
+                <a href="#about" class="text-slate-300 hover:text-teal-300 block px-3 py-2 rounded-md text-base font-medium transition-all">About</a>
+                <a href="#skills" class="text-slate-300 hover:text-teal-300 block px-3 py-2 rounded-md text-base font-medium transition-all">Skills</a>
+                <a href="#experience" class="text-slate-300 hover:text-teal-300 block px-3 py-2 rounded-md text-base font-medium transition-all">Experience</a>
+                <a href="#projects" class="text-slate-300 hover:text-teal-300 block px-3 py-2 rounded-md text-base font-medium transition-all">Projects</a>
+                <a href="#education" class="text-slate-300 hover:text-teal-300 block px-3 py-2 rounded-md text-base font-medium transition-all">Education</a>
+                <a href="#contact" class="text-slate-300 hover:text-teal-300 block px-3 py-2 rounded-md text-base font-medium transition-all">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <section id="home" class="min-h-[calc(100vh-4rem)] flex items-center py-20 relative">
+            <canvas id="aurora-canvas"></canvas>
+            <div class="w-full text-center z-10 floating">
+                <div class="inline-flex items-center gap-4">
+                    <h1 id="typewriter-name" class="text-5xl md:text-7xl font-extrabold text-white tracking-tight text-shadow"></h1>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span class="status-tooltip">Open to Opportunities</span>
+                    </div>
+                </div>
+                <p id="typewriter-subtitle" class="mt-4 text-lg md:text-xl gradient-text font-semibold"></p>
+                <div class="mt-8 flex justify-center items-center space-x-6">
+                    <a href="mailto:shivenda.2226cs1076@kiet.edu" class="social-link" aria-label="Email">
+                        <span>&#9993;</span>
+                    </a>
+                    <a href="https://github.com/Shivendra-11" target="_blank" class="social-link" aria-label="GitHub">
+                        <span>&#128187;</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/shivendra-keshari/" target="_blank" class="social-link" aria-label="LinkedIn">
+                        <span>&#128188;</span>
+                    </a>
+                </div>
+                <a href="#projects" class="mt-10 btn-primary pulse-glow">View My Work</a>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 section-fade-in">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-4xl font-bold text-white tracking-tight gradient-text">About Me</h2>
+                <div class="mt-6 text-lg text-slate-400 space-y-4 leading-relaxed glass-card rounded-2xl p-8">
+                    <p>I am a dedicated and results-oriented developer currently pursuing a B.Tech in Computer Science. My focus is on building intuitive, high-performance web applications. With hands-on experience in the MERN stack and a keen eye for UI/UX design, I thrive on solving complex problems and turning ideas into tangible, user-friendly products. I am passionate about continuous learning and collaborating with teams to create impactful digital experiences.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-24 section-fade-in">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-white tracking-tight gradient-text">Technical Skills</h2>
+                <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">A holistic view of my technical capabilities, combining a visual overview with a detailed breakdown of my core competencies.</p>
+            </div>
+            <div class="mt-8">
+                <div class="chart-container">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+            <div id="skills-grid" class="mt-6 max-w-4xl mx-auto"></div>
+        </section>
+
+        <section id="experience" class="py-24 section-fade-in">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-white tracking-tight gradient-text">Experience & Leadership</h2>
+                <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">My journey includes professional internship experience and key leadership roles, reflecting both my technical skills and my ability to collaborate and lead.</p>
+            </div>
+            <div class="mt-16 max-w-3xl mx-auto">
+                <div class="relative border-l-4 border-slate-700">
+                    <div id="experience-timeline"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-24 section-fade-in">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-white tracking-tight gradient-text">My Projects</h2>
+                <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">A selection of projects demonstrating my ability to build complete, functional applications from front to back. Use the filters to explore by technology.</p>
+                <div id="project-filters" class="mt-8 flex justify-center flex-wrap gap-3"></div>
+            </div>
+            <div id="projects-grid" class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            </div>
+        </section>
+
+        <section id="education" class="py-24 section-fade-in">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-white tracking-tight gradient-text">Education & Achievements</h2>
+                <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">My academic foundation is complemented by achievements in major national-level hackathons.</p>
+            </div>
+            <div class="mt-16 max-w-5xl mx-auto grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center gradient-text">Education</h3>
+                    <div id="education-list" class="space-y-6"></div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center gradient-text">Achievements</h3>
+                    <div id="achievements-list" class="space-y-6"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 section-fade-in">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-white tracking-tight gradient-text">Get In Touch</h2>
+                <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">I'm currently open to new opportunities. Feel free to reach out if you have a project in mind or just want to connect!</p>
+            </div>
+            <div class="mt-12 max-w-xl mx-auto">
+                <form id="contact-form" class="space-y-6 glass-card rounded-2xl p-8">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-slate-300 mb-2">Name</label>
+                        <input type="text" name="name" id="name" required class="form-input w-full rounded-lg py-3 px-4">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                        <input type="email" name="email" id="email" required class="form-input w-full rounded-lg py-3 px-4">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-slate-300 mb-2">Message</label>
+                        <textarea id="message" name="message" rows="4" required class="form-input w-full rounded-lg py-3 px-4 resize-none"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn-primary w-full">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+    </main>
+    
+    <footer class="mt-20 border-t border-slate-800">
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p class="text-slate-400">&copy; 2025 Shivendra Keshari. All Rights Reserved.</p>
+            <p class="mt-2 gradient-text font-semibold">Designed & Built with Passion</p>
+        </div>
+    </footer>
+
+    <div id="feedback-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 opacity-0">
+        <div class="modal-content rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center">
+            <div class="w-16 h-16 bg-gradient-to-r from-teal-400 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-white text-2xl">&#10003;</span>
+            </div>
+            <h3 class="text-xl font-bold text-white gradient-text">Thank You!</h3>
+            <p class="text-slate-300 mt-2">Your message has been sent. I'll get back to you soon.</p>
+            <button id="close-modal-btn" class="mt-6 btn-primary">Close</button>
+        </div>
+    </div>
+
+    <a href="#home" id="scroll-to-top" class="hover-lift">&#8679;</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const resumeData = {
+                skills: {
+                    labels: ['JavaScript', 'React.js', 'Node.js', 'Next.js', 'Databases', 'HTML/CSS', 'Dev Tools', 'UI/UX'],
+                    datasets: [
+                        {
+                            label: 'Proficiency',
+                            data: [90, 90, 85, 80, 78, 95, 90, 85],
+                            backgroundColor: 'rgba(94, 234, 212, 0.4)',
+                            borderColor: 'rgba(94, 234, 212, 1)',
+                            pointBackgroundColor: 'rgba(94, 234, 212, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(94, 234, 212, 1)',
+                            borderWidth: 2,
+                        },
+                        {
+                            label: 'Echo 1',
+                            data: [80, 80, 75, 70, 68, 85, 80, 75], // Slightly smaller values
+                            backgroundColor: 'rgba(94, 234, 212, 0.15)',
+                            borderColor: 'rgba(94, 234, 212, 0.3)',
+                            pointBackgroundColor: 'transparent',
+                            pointBorderColor: 'transparent',
+                            pointHoverBackgroundColor: 'transparent',
+                            pointHoverBorderColor: 'transparent',
+                            borderWidth: 1,
+                        },
+                        {
+                            label: 'Echo 2',
+                            data: [70, 70, 65, 60, 58, 75, 70, 65], // Even smaller values
+                            backgroundColor: 'rgba(94, 234, 212, 0.05)',
+                            borderColor: 'transparent',
+                            pointBackgroundColor: 'transparent',
+                            pointBorderColor: 'transparent',
+                            pointHoverBackgroundColor: 'transparent',
+                            pointHoverBorderColor: 'transparent',
+                            borderWidth: 1,
+                        }
+                    ]
+                },
+                detailedSkills: [
+                    {
+                        category: 'Languages',
+                        skills: [
+                            { name: 'JavaScript', icon: 'fa-brands fa-js' },
+                            { name: 'HTML5', icon: 'fa-brands fa-html5' },
+                            { name: 'CSS3', icon: 'fa-brands fa-css3-alt' },
+                            { name: 'Java', icon: 'fa-brands fa-java' },
+                            { name: 'C++', icon: 'fa-solid fa-file-code' }
+                        ]
+                    },
+                    {
+                        category: 'Frontend',
+                        skills: [
+                            { name: 'React.js', icon: 'fa-brands fa-react' },
+                            { name: 'Next.js', icon: 'fa-solid fa-forward' },
+                            { name: 'Tailwind CSS', icon: 'fa-solid fa-wind' }
+                        ]
+                    },
+                    {
+                        category: 'Backend & Databases',
+                        skills: [
+                            { name: 'Node.js', icon: 'fa-brands fa-node-js' },
+                            { name: 'Express.js', icon: 'fa-solid fa-server' },
+                            { name: 'MongoDB', icon: 'fa-solid fa-database' },
+                            { name: 'SQL', icon: 'fa-solid fa-database' }
+                        ]
+                    },
+                    {
+                        category: 'Tools & Design',
+                        skills: [
+                            { name: 'Git & GitHub', icon: 'fa-brands fa-github' },
+                            { name: 'Figma', icon: 'fa-brands fa-figma' },
+                            { name: 'Canva', icon: 'fa-solid fa-palette' }
+                        ]
+                    }
+                ],
+                experience: [
+                    { role: 'Graphics Lead', organization: 'KTS Club', period: 'Jan 2024 - Present', description: 'Led the design of all visual materials, establishing a consistent brand identity for the club. Mentored a team of 5 junior members in graphic design principles and tools like Figma and Canva.' },
+                    { role: 'Frontend Developer Intern', organization: 'School For All (TheFutureClassroom)', period: 'Nov 2023 - Feb 2024', description: 'Engineered and developed responsive, accessible, and interactive UI components using React.js, contributing to a 15% improvement in user engagement. Collaborated in an Agile team to integrate frontend components with backend APIs.' },
+                ],
+                achievements: [
+                    { title: 'NASA Space Apps Challenge Organizer', date: 'Oct 2024', description: 'Co-organized the NASA Space Apps Challenge hackathon, managing logistics, promotion, and registrations for an event with over 150 participants. Facilitated collaboration between mentors and teams.' },
+                    { title: 'SIH 2024 Finalist', date: 'Apr 2024', description: 'Developed the core front-end architecture for a sign language translation web app. The project was selected as a finalist in the prestigious Smart India Hackathon 2024 out of thousands of entries.' },
+                ],
+                projects: [
+                    { title: 'KTS Website', tags: ['React.js', 'Tailwind CSS', 'Figma'], description: 'A modern, responsive website for the KTS technical club, featuring a clean interface and engaging content to attract users.', details: '<strong>Problem:</strong> The club needed a professional online presence to attract new members and showcase its activities. <br><strong>Action:</strong> I designed and developed the complete website from scratch using React.js and Tailwind CSS, focusing on a mobile-first, responsive design. <br><strong>Result:</strong> The website increased club visibility and provided a central hub for information, leading to a 30% increase in membership inquiries.', links: { github: '#', live: '#' } },
+                    { title: 'Ticket_Ease', tags: ['React.js', 'Node.js', 'Express.js', 'MongoDB'], description: 'A streamlined MERN stack event ticketing platform for digital ticket booking, management, and access with real-time availability.', details: '<strong>Problem:</strong> Existing ticketing systems were often complex or expensive for small event organizers. <br><strong>Action:</strong> Built a full-stack application with secure JWT-based authentication, integrated a payment gateway (mock), and designed a RESTful API for managing events and bookings. <br><strong>Result:</strong> A fully functional prototype demonstrating a seamless, end-to-end ticketing experience for both organizers and attendees.', links: { github: '#', live: '#' } },
+                    { title: 'AlgoFlow', tags: ['React.js', 'JavaScript', 'CSS'], description: 'An interactive educational tool for visualizing data structures and algorithms, simplifying complex concepts through real-time animation.', details: '<strong>Problem:</strong> Many students find it difficult to grasp abstract algorithmic concepts from static text and diagrams. <br><strong>Action:</strong> Developed over 10 algorithm visualizations (e.g., Bubble Sort, Quick Sort, Binary Search) using React.js state management to control step-by-step animations. <br><strong>Result:</strong> Created an intuitive and engaging learning platform that helps users understand algorithmic logic visually.', links: { github: '#', live: '#' } },
+                ],
+                education: [
+                    { institution: 'KIET Group of Institutions, Ghaziabad', degree: 'Bachelor of Technology in Computer Science', period: '2022 - 2026', score: 'CGPA: 8.34/10' },
+                    { institution: 'Kendriya Vidyalaya, Varanasi', degree: 'Intermediate (CBSE)', period: '2021', score: 'Percentage: 89%' },
+                    { institution: 'Kendriya Vidyalaya, Varanasi', degree: 'High School (CBSE)', period: '2019', score: 'Percentage: 79%' }
+                ]
+            };
+
+            function renderSkillsChart() {
+                const ctx = document.getElementById('skillsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: resumeData.skills,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: 'rgba(203, 213, 225, 0.2)'
+                                },
+                                grid: {
+                                    color: 'rgba(203, 213, 225, 0.2)'
+                                },
+                                pointLabels: {
+                                    color: '#cbd5e1',
+                                    font: {
+                                        size: 14,
+                                        weight: '500'
+                                    }
+                                },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    backdropColor: 'rgba(15, 23, 42, 0.8)',
+                                    stepSize: 25,
+                                    max: 100,
+                                    min: 0
+                                }
+                            }
+                        },
+                        plugins: { 
+                            legend: { display: false }, 
+                            tooltip: {
+                                backgroundColor: '#1e293b',
+                                titleFont: { size: 14 },
+                                bodyFont: { size: 12 },
+                                padding: 10,
+                                cornerRadius: 4,
+                                filter: function (tooltipItem) {
+                                    return tooltipItem.datasetIndex === 0;
+                                },
+                                callbacks: {
+                                    label: (c) => `${c.dataset.label || ''}: ${c.raw}%`
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeInOutCubic'
+                        }
+                    }
+                });
+            }
+
+            function renderSkillIcons() {
+                const container = document.getElementById('skills-grid');
+                container.innerHTML = '';
+                resumeData.detailedSkills.forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'mb-8';
+                    
+                    const title = document.createElement('h3');
+                    title.className = 'text-2xl font-bold text-white mb-4 text-center gradient-text';
+                    title.textContent = category.category;
+                    categoryDiv.appendChild(title);
+
+                    const skillsContainer = document.createElement('div');
+                    skillsContainer.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+                    
+                    category.skills.forEach(skill => {
+                        const skillCard = document.createElement('div');
+                        skillCard.className = 'glass-card p-4 rounded-lg flex flex-col items-center justify-center text-center hover-lift';
+                        skillCard.innerHTML = `
+                            <i class="${skill.icon} text-4xl text-teal-300 mb-2"></i>
+                            <span class="text-slate-300 font-medium">${skill.name}</span>
+                        `;
+                        skillsContainer.appendChild(skillCard);
+                    });
+                    
+                    categoryDiv.appendChild(skillsContainer);
+                    container.appendChild(categoryDiv);
+                });
+            }
+
+            function renderTimeline() {
+                const timelineContainer = document.getElementById('experience-timeline');
+                resumeData.experience.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'mb-10 ml-8 relative timeline-item';
+                    div.innerHTML = `<div class="timeline-point"></div><div class="glass-card p-6 rounded-lg"><h3 class="text-xl font-semibold text-white">${item.role}</h3><p class="block mb-2 text-sm font-normal leading-none text-slate-400">${item.organization} | ${item.period}</p><p class="text-base font-normal text-slate-300">${item.description}</p></div>`;
+                    timelineContainer.appendChild(div);
+                });
+            }
+
+            function renderProjects() {
+                const gridContainer = document.getElementById('projects-grid');
+                gridContainer.innerHTML = '';
+                const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || '*';
+
+                resumeData.projects.forEach((project, index) => {
+                    if (activeFilter === '*' || project.tags.includes(activeFilter)) {
+                        const card = document.createElement('div');
+                        card.className = 'glass-card rounded-lg overflow-hidden flex flex-col';
+                        card.innerHTML = `<div class="p-6 flex-grow"><h3 class="font-bold text-xl mb-2 text-white">${project.title}</h3><p class="text-slate-400 text-base mb-4">${project.description}</p><div class="flex flex-wrap gap-2 mb-4">${project.tags.map(tag => `<span class="bg-teal-500/20 text-teal-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}</div></div><div class="p-6 bg-slate-800/50 border-t border-slate-700 mt-auto"><div class="flex justify-between items-center"><button data-project-index="${index}" class="learn-more-btn text-teal-300 hover:text-teal-200 font-semibold">Learn More</button><div><a href="${project.links.github}" target="_blank" class="text-slate-400 hover:text-teal-300 mr-4 transition-transform hover:scale-125 inline-block">&#128187;</a><a href="${project.links.live}" target="_blank" class="text-slate-400 hover:text-teal-300 transition-transform hover:scale-125 inline-block">&#128279;</a></div></div></div><div id="details-${index}" class="project-details hidden p-6 border-t border-slate-700 bg-slate-800"><p class="text-slate-300">${project.details}</p></div>`;
+                        gridContainer.appendChild(card);
+                    }
+                });
+
+                document.querySelectorAll('.learn-more-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const index = this.dataset.projectIndex;
+                        const details = document.getElementById(`details-${index}`);
+                        
+                        details.classList.remove('hidden');
+                        if (details.style.maxHeight) {
+                            details.style.maxHeight = null;
+                            button.textContent = 'Learn More';
+                        } else {
+                            details.style.maxHeight = details.scrollHeight + "px";
+                            button.textContent = 'Show Less';
+                        }
+                    });
+                });
+            }
+            
+            function renderProjectFilters() {
+                const filtersContainer = document.getElementById('project-filters');
+                const tags = ['*', ...new Set(resumeData.projects.flatMap(p => p.tags))];
+                filtersContainer.innerHTML = tags.map(tag => `<button class="filter-btn ${tag === '*' ? 'active' : ''}" data-filter="${tag}">${tag === '*' ? 'All' : tag}</button>`).join('');
+                
+                filtersContainer.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('filter-btn')) {
+                        filtersContainer.querySelector('.active').classList.remove('active');
+                        e.target.classList.add('active');
+                        renderProjects();
+                    }
+                });
+            }
+
+            function renderEducation() {
+                const listContainer = document.getElementById('education-list');
+                resumeData.education.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'glass-card p-6 rounded-lg hover-lift';
+                    div.innerHTML = `<h4 class="font-semibold text-lg text-white">${item.institution}</h4><p class="text-slate-300">${item.degree}</p><p class="text-sm text-slate-400 mt-1">${item.period} | ${item.score}</p>`;
+                    listContainer.appendChild(div);
+                });
+            }
+
+            function renderAchievements() {
+                const listContainer = document.getElementById('achievements-list');
+                resumeData.achievements.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'glass-card p-6 rounded-lg hover-lift';
+                    div.innerHTML = `<h4 class="font-semibold text-lg text-white">${item.title}</h4><p class="text-sm text-slate-400 mb-2">${item.date}</p><p class="text-slate-300">${item.description}</p>`;
+                    listContainer.appendChild(div);
+                });
+            }
+
+            function setupInteractions() {
+                const cursorDot = document.getElementById('cursor-dot');
+                if (window.matchMedia('(pointer: fine)').matches) {
+                    window.addEventListener('mousemove', e => {
+                        cursorDot.style.left = `${e.clientX}px`;
+                        cursorDot.style.top = `${e.clientY}px`;
+                    });
+                    document.querySelectorAll('a, button, .timeline-item, [data-project-index]').forEach(el => {
+                        el.addEventListener('mouseenter', () => cursorDot.classList.add('expanded'));
+                        el.addEventListener('mouseleave', () => cursorDot.classList.remove('expanded'));
+                    });
+                } else {
+                    cursorDot.style.display = 'none';
+                }
+
+                const header = document.getElementById('header');
+                const scrollToTopBtn = document.getElementById('scroll-to-top');
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.scrollY > 50;
+                    header.classList.toggle('header-scrolled', scrolled);
+                    scrollToTopBtn.classList.toggle('visible', window.scrollY > 300);
+                });
+
+                const sections = document.querySelectorAll('.section-fade-in');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15 });
+                sections.forEach(section => observer.observe(section));
+
+                const allNavLinks = document.querySelectorAll('header a[href^="#"], #scroll-to-top');
+                allNavLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                        const mobileMenu = document.getElementById('mobile-menu');
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    });
+                });
+
+                const menuButton = document.getElementById('mobile-menu-button');
+                const mobileMenu = document.getElementById('mobile-menu');
+                menuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                const contactForm = document.getElementById('contact-form');
+                const modal = document.getElementById('feedback-modal');
+                const closeModalBtn = document.getElementById('close-modal-btn');
+                
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    modal.classList.remove('hidden');
+                    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                    contactForm.reset();
+                });
+
+                closeModalBtn.addEventListener('click', function() {
+                    modal.classList.add('opacity-0');
+                    setTimeout(() => modal.classList.add('hidden'), 400);
+                });
+            }
+            
+            function typeWriter(element, text, speed, callback) {
+                let i = 0;
+                element.innerHTML = '';
+                const cursor = document.createElement('span');
+                cursor.className = 'typewriter-cursor';
+                element.appendChild(cursor);
+
+                function type() {
+                    if (i < text.length) {
+                        element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        if (callback) callback();
+                    }
+                }
+                type();
+            }
+
+            function setupTypewriter() {
+                const nameEl = document.getElementById('typewriter-name');
+                const subtitleEl = document.getElementById('typewriter-subtitle');
+                const nameText = "Shivendra Keshari";
+                const subtitleText = "Full-Stack Developer with a Passion for Frontend Excellence";
+
+                typeWriter(nameEl, nameText, 100, () => {
+                    typeWriter(subtitleEl, subtitleText, 50, () => {
+                        const cursor = subtitleEl.querySelector('.typewriter-cursor');
+                        if (cursor) cursor.remove();
+                    });
+                });
+            }
+            
+            function setupAurora() {
+                const canvas = document.getElementById('aurora-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let w = canvas.width = window.innerWidth;
+                let h = canvas.height = window.innerHeight;
+                let particles = [];
+                const properties = {
+                    particleCount: 4,
+                    particleColor: 'hsla(160, 50%, 50%, 0.1)',
+                    particleSpeed: 0.5,
+                    particleRadius: Math.sqrt(w*w + h*h) / 2.5
+                };
+                
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * w;
+                        this.y = Math.random() * h;
+                        this.vx = (Math.random() - 0.5) * properties.particleSpeed;
+                        this.vy = (Math.random() - 0.5) * properties.particleSpeed;
+                    }
+                    
+                    reposition() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+                        if (this.x < 0 || this.x > w) this.vx *= -1;
+                        if (this.y < 0 || this.y > h) this.vy *= -1;
+                    }
+                    
+                    draw() {
+                        ctx.beginPath();
+                        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, properties.particleRadius);
+                        gradient.addColorStop(0, properties.particleColor);
+                        gradient.addColorStop(1, 'hsla(160, 50%, 50%, 0)');
+                        ctx.fillStyle = gradient;
+                        ctx.arc(this.x, this.y, properties.particleRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                
+                function loop() {
+                    ctx.clearRect(0, 0, w, h);
+                    for (let particle of particles) {
+                        particle.reposition();
+                        particle.draw();
+                    }
+                    requestAnimationFrame(loop);
+                }
+                
+                function init() {
+                    const homeSection = document.getElementById('home');
+                    if (!homeSection) return;
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = homeSection.offsetHeight;
+                    particles = [];
+                    for (let i = 0; i < properties.particleCount; i++) {
+                        particles.push(new Particle());
+                    }
+                    loop();
+                }
+                
+                init();
+                window.addEventListener('resize', init);
+            }
+            
+            renderSkillsChart();
+            renderSkillIcons();
+            renderTimeline();
+            renderProjectFilters();
+            renderProjects();
+            renderEducation();
+            renderAchievements();
+            setupInteractions();
+            setupAurora();
+            setupTypewriter();
+        });
+    </script>
+</body>
+</html>
